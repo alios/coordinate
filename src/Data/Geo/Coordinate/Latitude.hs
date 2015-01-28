@@ -19,6 +19,8 @@ import Data.Geo.Coordinate.Minutes(AsMinutes(_Minutes), Minutes)
 import Data.Geo.Coordinate.Seconds(AsSeconds(_Seconds), Seconds)
 import Data.Ord(Ord((<)))
 import Prelude(Double, Show, Int, Num((+), (*), (-), abs), Fractional((/)), properFraction, fromIntegral)
+import qualified Numeric.Units.Dimensional.TF.Prelude as Dim
+import Numeric.Units.Dimensional.TF.Prelude (PlaneAngle,(*~),(/~))
 
 -- $setup
 -- >>> import Prelude(Functor(..))
@@ -123,6 +125,17 @@ instance (Choice p, Applicative f) => AsLatitude p f Double where
                  m' <- (abs m :: Int) ^? _Minutes
                  s' <- (abs s * 60) ^? _Seconds
                  return (Latitude d' m' s'))
+
+
+instance (Choice p, Applicative f) => AsLatitude p f (PlaneAngle Double) where
+  _Latitude =
+    prism' (\(Latitude d m s) ->
+             let d' = (fromIntegral (_DegreesLatitude # d :: Int)) *~ Dim.degree
+                 m' = (fromIntegral (_Minutes # m :: Int)) *~ Dim.arcminute
+                 s' = (_Seconds # s :: Double) *~ Dim.arcsecond
+             in Dim.sum [d', m', s']
+           )
+    (\x -> (x /~ Dim.degree) ^? _Latitude)
 
 instance (p ~ (->), Functor f) => AsDegreesLatitude p f Latitude where
   _DegreesLatitude =

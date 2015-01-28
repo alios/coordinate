@@ -34,6 +34,7 @@ library
                     , tagged >= 0.7
                     , transformers >= 0.3.0.0
                     , radian >= 0.0.4
+                    , dimensional-tf >= 0.3 
 
   ghc-options:
                     -Wall
@@ -71,7 +72,6 @@ test-suite doctests
                     , directory >= 1.1
                     , QuickCheck >= 2.0
                     , template-haskell >= 2.8
-                    , dimensional-tf >= 0.3 
 
   ghc-options:
                     -Wall
