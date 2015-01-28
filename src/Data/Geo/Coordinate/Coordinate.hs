@@ -10,6 +10,7 @@ module Data.Geo.Coordinate.Coordinate(
 , AsCoordinate(..)
 , (.#.)
 , (<°>)
+, (<°~>)
 ) where
 
 import Control.Applicative(Applicative)
@@ -30,6 +31,7 @@ import Data.Ord(Ord)
 import Data.Tagged(Tagged)
 import Data.Tuple(curry, uncurry)
 import Prelude(Show, Double)
+import Numeric.Units.Dimensional.TF.Prelude (PlaneAngle)
 
 data Coordinate =
   Coordinate
@@ -52,6 +54,15 @@ data Coordinate =
   -> Double
   -> Maybe Coordinate
 (<°>) =
+  curry (^? _Coordinate)
+
+-- | Build a coordinate from a fractional latitude and fractional longitude. Fails
+-- if either are out of range.
+(<°~>) ::
+  PlaneAngle Double
+  -> PlaneAngle Double
+  -> Maybe Coordinate
+(<°~>) =
   curry (^? _Coordinate)
 
 class AsCoordinate p f s where
@@ -159,3 +170,7 @@ instance (p ~ (->), Functor f) => AsLongitude p f Coordinate where
 instance (p ~ (->), Functor f) => AsDegreesLongitude p f Coordinate where
   _DegreesLongitude =
     _Longitude . _DegreesLongitude
+
+instance (Choice p, Applicative f) => AsCoordinate p f (PlaneAngle Double, PlaneAngle Double) where
+  _Coordinate =
+    coordinatePrism'
