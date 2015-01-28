@@ -1,5 +1,5 @@
 name:               coordinate
-version:            0.0.18
+version:            0.0.19
 license:            BSD3
 license-file:       LICENCE
 author:             Tony Morris <ʇǝu˙sıɹɹoɯʇ@ןןǝʞsɐɥ>
@@ -71,6 +71,7 @@ test-suite doctests
                     , directory >= 1.1
                     , QuickCheck >= 2.0
                     , template-haskell >= 2.8
+                    , dimensional-tf >= 0.3 
 
   ghc-options:
                     -Wall
